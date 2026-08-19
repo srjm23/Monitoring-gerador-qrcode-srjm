@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: grafana
+stringData:
+  datasources.yaml: |-
+    {
+      "apiVersion": 1,
+      "datasources": [
+        {
+          "access": "proxy",
+          "editable": false,
+          "name": "prometheus",
+          "orgId": 1,
+          "type": "prometheus",
+          "url": "http://prometheus-k8s.monitoring.svc:9090",
+          "version": 1
+        },
+        {
+          "access": "proxy",
+          "editable": false,
+          "isDefault": false,
+          "name": "tempo",
+          "orgId": 1,
+          "type": "tempo",
+          "uid": "tempo",
+          "url": "http://tempo.monitoring.svc.cluster.local:3200",
+          "version": 1,
+          "jsonData": {
+            "httpMethod": "GET",
+            "nodeGraph": {"enabled": true},
+            "serviceMap": {"datasourceUid": "prometheus"},
+            "tracesToMetrics": {"datasourceUid": "prometheus"}
+          }
+        }
+      ]
+    }

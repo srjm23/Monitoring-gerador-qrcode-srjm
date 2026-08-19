@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prometheus-httproute
+  namespace: monitoring
+
+spec:
+  parentRefs:
+    - name: srjm-gateway-nginx
+      namespace: qrcode-system
+      sectionName: prometheus-http
+
+    - name: srjm-gateway-nginx
+      namespace: qrcode-system
+      sectionName: prometheus-https
+
+  hostnames:
+  - prometheus.geradorqrcode-srjm.uk
+
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: prometheus-k8s
+      port: 9090

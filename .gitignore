@@ -1,0 +1,11 @@
+# Ignora todos os arquivos por padrão.
+*
+
+# Mantém os diretórios acessíveis para avaliar os arquivos permitidos.
+!*/
+
+# Arquivos permitidos.
+!*.yaml
+!*.yml
+!*.md
+!.gitignore

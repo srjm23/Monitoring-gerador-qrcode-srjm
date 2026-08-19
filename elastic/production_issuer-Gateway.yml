@@ -1,0 +1,72 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: <email>
+
+    privateKeySecretRef:
+      name: letsencrypt-prod
+
+    solvers:
+      - selector:
+          dnsNames:
+            - geradorqrcode-srjm.uk
+        http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: srjm-gateway-nginx
+                namespace: qrcode-system
+                kind: Gateway
+                group: gateway.networking.k8s.io
+                sectionName: http
+
+      - selector:
+          dnsNames:
+            - grafana.geradorqrcode-srjm.uk
+        http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: srjm-gateway-nginx
+                namespace: qrcode-system
+                kind: Gateway
+                group: gateway.networking.k8s.io
+                sectionName: grafana-http
+                
+      - selector:
+          dnsNames:
+            - prometheus.geradorqrcode-srjm.uk
+        http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: srjm-gateway-nginx
+                namespace: qrcode-system
+                kind: Gateway
+                group: gateway.networking.k8s.io
+                sectionName: prometheus-http
+
+      - selector:
+          dnsNames:
+            - vault.geradorqrcode-srjm.uk
+        http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: srjm-gateway-nginx
+                namespace: qrcode-system
+                kind: Gateway
+                group: gateway.networking.k8s.io
+                sectionName: vault-http
+
+      - selector:
+          dnsNames:
+            - kibana.geradorqrcode-srjm.uk
+        http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: srjm-gateway-nginx
+                namespace: qrcode-system
+                kind: Gateway
+                group: gateway.networking.k8s.io
+                sectionName: kibana-http

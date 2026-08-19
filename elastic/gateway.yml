@@ -1,0 +1,188 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: srjm-gateway-nginx
+  namespace: qrcode-system
+  labels:
+    app: srjm
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  gatewayClassName: nginx
+
+  listeners:
+    - name: http
+      hostname: geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Same
+
+    - name: https
+      hostname: geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: geradorqrcode-srjm.uk-tls
+      allowedRoutes:
+        namespaces:
+          from: Same
+
+    # Argo CD HTTP
+    - name: argocd-http
+      hostname: argocd.geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+    # Argo CD HTTPS
+    - name: argocd-https
+      hostname: argocd.geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: argocd.geradorqrcode-srjm.uk-tls
+            namespace: argocd
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+
+    # GRAFANA HTTP
+    - name: grafana-http
+      hostname: grafana.geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+    # GRAFANA HTTPS
+    - name: grafana-https
+      hostname: grafana.geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: grafana.geradorqrcode-srjm.uk-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+
+    # PROMETHEUS HTTP
+    - name: prometheus-http
+      hostname: prometheus.geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+    # PROMETHEUS HTTPS
+    - name: prometheus-https
+      hostname: prometheus.geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: prometheus.geradorqrcode-srjm.uk-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+    # vault HTTP
+    - name: vault-http
+      hostname: vault.geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+    # vault HTTPS
+    - name: vault-https
+      hostname: vault.geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: vault.geradorqrcode-srjm.uk-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+
+    - name: kibana-http
+      hostname: kibana.geradorqrcode-srjm.uk
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed
+
+
+    - name: kibana-https
+      hostname: kibana.geradorqrcode-srjm.uk
+      port: 443
+      protocol: HTTPS
+      tls:  
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: kibana.geradorqrcode-srjm.uk-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: allowed

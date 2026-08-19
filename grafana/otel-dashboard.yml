@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: srjm-qrcode-otel-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  srjm-qrcode-otel.json: |-
+    {
+      "annotations": {"list": []},
+      "editable": true,
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Collector disponível",
+          "id": 1,
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+          "targets": [
+            {"expr": "max(up{namespace=\"monitoring\", service=\"otel-collector\"})", "refId": "A"}
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                {"type": "value", "options": {"0": {"text": "Indisponível"}, "1": {"text": "Disponível"}}}
+              ],
+              "thresholds": {"mode": "absolute", "steps": [{"color": "red"}, {"color": "green", "value": 1}]}
+            },
+            "overrides": []
+          },
+          "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "center", "textMode": "auto"}
+        },
+        {
+          "type": "timeseries",
+          "title": "Pontos de métricas recebidos pelo OTel",
+          "id": 2,
+          "gridPos": {"h": 8, "w": 16, "x": 8, "y": 0},
+          "targets": [
+            {"expr": "sum(rate(otelcol_receiver_accepted_metric_points_total{namespace=\"monitoring\"}[5m]))", "legendFormat": "pontos/s", "refId": "A"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+          "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "single"}}
+        },
+        {
+          "type": "timeseries",
+          "title": "Falhas no pipeline OpenTelemetry",
+          "id": 3,
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+          "targets": [
+            {"expr": "sum(rate(otelcol_receiver_refused_metric_points_total{namespace=\"monitoring\"}[5m]))", "legendFormat": "recusados/s", "refId": "A"},
+            {"expr": "sum(rate(otelcol_exporter_send_failed_metric_points_total{namespace=\"monitoring\"}[5m]))", "legendFormat": "falhas no envio/s", "refId": "B"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+          "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["srjm", "opentelemetry"],
+      "templating": {"list": []},
+      "time": {"from": "now-1h", "to": "now"},
+      "timezone": "browser",
+      "title": "SRJM QR Code / OpenTelemetry",
+      "uid": "srjm-qrcode-otel",
+      "version": 1
+    }
